@@ -66,19 +66,6 @@ module BabySqueel
           end
         end
       end
-
-      # AR 6 build_joins do not call `group_by` anymore thus
-      # we need to override `each`
-      def each(&block)
-        super do |join|
-          case join
-          when BabySqueel::Join
-            :association_join
-          else
-            yield join
-          end
-        end
-      end
     end
 
     class Builder # :nodoc:

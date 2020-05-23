@@ -3,7 +3,7 @@ module BabySqueel
   # By including Polyamorous::TreeNode, when this instance is found when
   # traversing joins in ActiveRecord::Associations::JoinDependency::walk_tree,
   # Join#add_to_tree will be called.
-  class Join
+  class Join < Hash
     include Polyamorous::TreeNode
 
     def initialize(associations)
