@@ -1,4 +1,5 @@
 require 'join_dependency'
+require 'pry'
 
 # this is a patch to suppor Rails 6 until it is released
 module JoinDependency
@@ -80,14 +81,19 @@ module BabySqueel
       # Find the alias of a BabySqueel::Association, by passing
       # a list (in order of chaining) of associations and finding
       # the respective JoinAssociation at each level.
+      # def find_alias(associations)
+      #   table = find_join_association(associations).table
+      #   reconstruct_with_type_caster(table, associations)
+      # end
+
       def find_alias(associations)
-        table = find_join_association(associations).table
-        reconstruct_with_type_caster(table, associations)
+        join_association = find_join_association(associations)
+        reconstruct_with_type_caster(join_association.table || OpenStruct.new(name: join_association.base_klass.table_name), associations)
       end
 
       private
-
       def find_join_association(associations)
+        # binding.pry
         associations.inject(join_dependency.send(:join_root)) do |parent, assoc|
           parent.children.find do |join_association|
             reflections_equal?(
@@ -115,7 +121,7 @@ module BabySqueel
       #
       # See: https://github.com/rails/rails/pull/27994
       def reconstruct_with_type_caster(table, associations)
-        return table if ::ActiveRecord::VERSION::MAJOR < 5
+        return table if ::ActiveRecord::VERSION::MAJOR > 5
         type_caster = associations.last._scope.type_caster
         ::Arel::Table.new(table.name, type_caster: type_caster)
       end

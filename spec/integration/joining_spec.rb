@@ -7,6 +7,7 @@ describe '#joining' do
         author.on(author.id == author_id)
       }
 
+      # binding.pry
       expect(relation).to match_sql_snapshot
     end
 
